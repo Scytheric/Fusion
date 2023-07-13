@@ -89,6 +89,15 @@ export type Value<T> = StateObject<T> & {
  	set: (Value<T>, newValue: any, force: boolean?) -> ()
 }
 
+-- A state object whose value can be set at any time, have any element inserted/removed/assigned by the user.
+export type TableValue<T> = StateObject<T> & {
+	-- kind: "State" (add this when Luau supports singleton types)
+	set: (Value<T>, newValue: any, force: boolean?) -> (),
+	insert: <V>(Value<T>, value: V, pos: number?, doNotAllowDuplicates: boolean?) -> (),
+	remove: (Value<T>, index: number?) -> (),
+	removeByValue: <V>(Value<T>, value: V) -> ()
+}
+
 -- A state object whose value is derived from other objects using a callback.
 export type Computed<T> = StateObject<T> & Dependent & {
 	kind: "Computed"
