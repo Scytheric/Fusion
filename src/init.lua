@@ -24,6 +24,7 @@ local Fusion = restrictRead("Fusion", {
 	AttributeOut = require(script.Instances.AttributeOut),
 
 	Value = require(script.State.Value),
+	TableValue = require(script.State.TableValue),
 	Computed = require(script.State.Computed),
 	ForPairs = require(script.State.ForPairs),
 	ForKeys = require(script.State.ForKeys),
@@ -35,7 +36,11 @@ local Fusion = restrictRead("Fusion", {
 
 	cleanup = require(script.Utility.cleanup),
 	doNothing = require(script.Utility.doNothing),
-	peek = require(script.State.peek)
+	peek = require(script.State.peek),
+
+	isSimilar = require(script.Utility.isSimilar),
+	TableUtil = require(script.Utility.TableUtil),
+	xtypeof = require(script.Utility.xtypeof)
 }) :: Fusion
 
 export type StateObject<T> = PubTypes.StateObject<T>
@@ -50,6 +55,10 @@ export type Observer = PubTypes.Observer
 export type Tween<T> = PubTypes.Tween<T>
 export type Spring<T> = PubTypes.Spring<T>
 export type Use = PubTypes.Use
+export type SpecialKey = PubTypes.SpecialKey
+export type PropertyTable = PubTypes.PropertyTable
+export type Children = PubTypes.Children
+export type Dependency = PubTypes.Dependency
 
 type Fusion = {
 	version: PubTypes.Version,
