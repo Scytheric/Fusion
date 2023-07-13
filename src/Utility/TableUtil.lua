@@ -1,93 +1,67 @@
 --!strict
 
---#REVIEW: Consider moving to a separate Wally package for those who only want this module.
+local TableUtil = {}
 
--- // LOCAL // --
---#TODO: Require the Fusion package module directly once all types are exposed.
-local FusionPubTypes = require(script.Parent.Parent.PubTypes)
-local Fusion = require(script.Parent.Parent)
+-- Converts a string path to an array.
+function TableUtil.StringPathToArray(path: string, sep: string?, ignoreNumericIndices: boolean?): { string | number }
+	ignoreNumericIndices = if ignoreNumericIndices ~= nil then ignoreNumericIndices else false
 
---------------------------------------------------
+	local pathArray = {}
+	local pattern = if sep then "[^%" .. sep .. "]+" else "[^%/]+"
 
-local FusionUtil = {}
+	if path ~= "" then
+		for s in string.gmatch(path, pattern) do
+			local v: string | number = s
 
--- Checks to see if a passed value is a Fusion state object.
-function FusionUtil.IsState<T>(data: FusionPubTypes.StateObject<T> | T | any): boolean
-	if type(data) == "table" and data.type == "State" then
-		return true
+			if not ignoreNumericIndices then
+				local num = string.find(s, "^%d")
+
+				if num then
+					v = tonumber(num) or s
+				end
+			end
+
+			table.insert(pathArray, v)
+		end
 	end
 
-	return false
+	return pathArray
 end
 
--- Gets the value from a Fusion value or returns a default value. Optional type checker for third argument.
--- (Originally from: https://github.com/boatbomber/PluginEssentials/blob/main/src/StudioComponents/Util/getState.lua)
-function FusionUtil.GetState<T>(data: FusionPubTypes.StateObject<T> | T | any, default: FusionPubTypes.StateObject<T> | T, mustBeKind: string?): FusionPubTypes.StateObject<T> | any
-	local stateKind = mustBeKind or "Value"
-	local isInputAState = FusionUtil.Unwrap(data, false) ~= data
-	local isDefaultAState = FusionUtil.Unwrap(default, false) ~= default
-
-	if isInputAState and (mustBeKind == nil or data.kind == mustBeKind) then
-		return data
-	elseif data ~= nil then
-		return Fusion[stateKind](FusionUtil.Unwrap(data))
-	end
-
-	return if isDefaultAState
-		then default
-		else Fusion[stateKind](default)
-end
-
--- Returns if a Fusion value, wrap into a Fusion value and return if not.
-function FusionUtil.ToValue<T>(data: FusionPubTypes.Value<T> | T): FusionPubTypes.Value<T>
-	if type(data) == "table" and data.type == "State" then
-		return data
-	end
-
-	return Fusion.Value(data)
-end
-
--- Returns if a Fusion value, wrap into a Fusion value IF NOT NIL and return if not.
-function FusionUtil.ToValueNotNil<T>(data: FusionPubTypes.Value<T> | T, default: T): FusionPubTypes.Value<T>
-	if type(data) == "table" and data.type == "State" then
-		return data
-	end
-
-	return if data ~= nil
-		then Fusion.Value(data)
-		else Fusion.Value(default)
-end
-
--- Returns if a Fusion value, wrap into a Fusion value IF NOT NIL and return if not.
-function FusionUtil.ToValueFormat<T>(data: Fusion.Value<T> | T, format: (data: FusionPubTypes.Value<T> | T) -> (FusionPubTypes.Value<T>)): FusionPubTypes.Value<T>
-	if type(data) == "table" and data.type == "State" then
-		return data
-	end
-
-	return format(data)
-end
-
--- Gets from a Fusion value.
--- (Originally from: https://github.com/boatbomber/PluginEssentials/blob/main/src/StudioComponents/Util/unwrap.lua)
-function FusionUtil.Unwrap<T>(data: FusionPubTypes.StateObject<T> | T, useDependency: boolean?): T
-	if type(data) == "table" and data.type == "State" then
-		return data:get(useDependency)
-	end
-
-	return data :: T
-end
-
--- Gets from a Fusion value or defaults to the non nil value.
-function FusionUtil.UnwrapNotNil<T>(data: FusionPubTypes.StateObject<T> | T, defaultValue: T, useDependency: boolean?): T
-	if type(data) == "table" and data.type == "State" then
-		return data:get(useDependency)
-	end
-
-	if data ~= nil then
-		return data :: T
+-- Returns a stringified version of a path array.
+-- Will just return directly if a string already.
+function TableUtil.PathArrayToString(path: string | { string }, sep: string?)
+	if type(path) == "string" then
+		return path
 	else
-		return defaultValue
+		return table.concat(path, sep or "/")
 	end
 end
 
-return FusionUtil
+-- Parses a table with a table of indexes (the more elements, the more nesting) or a string path and returns the value.
+function TableUtil.ParseTableGetValue(tbl: {}, path: { string } | string, delimiter: string?, ignoreNumericIndices: boolean?)
+	local pathArray: { string | number } = if type(path) == "string"
+		then TableUtil.StringPathToArray(path, delimiter, ignoreNumericIndices)
+		else path
+
+	for i = 1, #pathArray - 1 do
+		tbl = tbl[pathArray[i]]
+	end
+
+	return tbl[pathArray[#pathArray]]
+end
+
+-- Parses a table with a table of indexes (the more elements, the more nesting) or a string path and sets the value.
+function TableUtil.ParseTableSetValue(tbl: {}, path: { string } | string, value: any?, delimiter: string?, ignoreNumericIndices: boolean?)
+	local pathArray: { string | number } = if type(path) == "string"
+		then TableUtil.StringPathToArray(path, delimiter, ignoreNumericIndices)
+		else path
+
+	for i = 1, #pathArray - 1 do
+		tbl = tbl[pathArray[i]]
+	end
+
+	tbl[pathArray[#pathArray]] = value
+end
+
+return TableUtil
