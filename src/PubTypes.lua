@@ -90,7 +90,7 @@ export type Value<T> = StateObject<T> & {
 }
 
 -- A state object whose value can be set at any time, have any element inserted/removed/assigned by the user.
-export type TableValue<T> = StateObject<T> & {
+export type TableValue<K, V> = StateObject<{ [K]: V }> & {
 	-- kind: "State" (add this when Luau supports singleton types)
 	set: (Value<T>, newValue: any, force: boolean?) -> (),
 	insert: <V>(Value<T>, value: V, pos: number?, doNotAllowDuplicates: boolean?) -> (),
