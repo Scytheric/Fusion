@@ -2,6 +2,29 @@
 
 local TableUtil = {}
 
+-- Gets the type of the table.
+-- Will return "Array", "Dictionary", "Mixed", or "Empty."
+-- Will return nil if arg #1 isn't a table.
+function TableUtil.GetTableType<K, V>(t: { [K]: V }): string?
+	if typeof(t) ~= "table" then return nil end
+	if next(t) == nil then return "Empty" end
+
+	local isArray = true
+	local isDictionary = true
+
+	for k, _ in next, t do
+		if typeof(k) == "number" and k % 1 == 0 and k > 0 then
+			isDictionary = false
+		else
+			isArray = false
+		end
+	end
+
+	return if isArray then "Array"
+		elseif isDictionary then "Dictionary"
+		else "Mixed"
+end
+
 -- Converts a string path to an array.
 function TableUtil.StringPathToArray(path: string, sep: string?, ignoreNumericIndices: boolean?): { string | number }
 	ignoreNumericIndices = if ignoreNumericIndices ~= nil then ignoreNumericIndices else false
