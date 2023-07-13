@@ -95,7 +95,8 @@ export type TableValue<K, V> = StateObject<{ [K]: V }> & {
 	set: (TableValue<K, V>, newValue: any, force: boolean?) -> (),
 	insert: <NV>(TableValue<K, V>, value: NV, pos: number?, doNotAllowDuplicates: boolean?) -> (),
 	remove: (TableValue<K, V>, index: number?) -> (),
-	removeByValue: <NV>(TableValue<K, V>, value: NV) -> ()
+	removeByValue: <NV>(TableValue<K, V>, value: NV) -> (),
+	assign: <NK, NV>(TableValue<K, V>, key: NK, value: NV, deepAssignment: boolean?, deliminter: string?, ignoreNumericIndices: boolean?) -> ()
 }
 
 
