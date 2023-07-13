@@ -1,6 +1,6 @@
 [package]
-name = "scytheric/tritium"
-description = "A forked, extended version of Fusion, providing new state objects, utility, and much more."
+name = "scytheric/fusion"
+description = "A forked version of Fusion including new state objects, utility, and much more."
 license = "MIT"
 authors = ["Elttob", "scytheric"]
 version = "0.2.0"
