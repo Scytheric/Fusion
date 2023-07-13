@@ -77,7 +77,7 @@ type Fusion = {
 	AttributeOut: (attributeName: string) -> PubTypes.SpecialKey,
 
 	Value: <T>(initialValue: T) -> Value<T>,
-	Tablevalue: <K, V>(initialValue: { [K]: V }) -> TableValue<K, V>,
+	TableValue: <K, V>(initialValue: { [K]: V }) -> TableValue<K, V>,
 	Computed: <T>(callback: (Use) -> T, destructor: (T) -> ()?) -> Computed<T>,
 	ForPairs: <KI, VI, KO, VO, M>(inputTable: CanBeState<{[KI]: VI}>, processor: (Use, KI, VI) -> (KO, VO, M?), destructor: (KO, VO, M?) -> ()?) -> ForPairs<KO, VO>,
 	ForKeys: <KI, KO, M>(inputTable: CanBeState<{[KI]: any}>, processor: (Use, KI) -> (KO, M?), destructor: (KO, M?) -> ()?) -> ForKeys<KO, any>,
