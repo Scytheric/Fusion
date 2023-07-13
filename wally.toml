@@ -3,7 +3,7 @@ name = "scytheric/fusion"
 description = "A forked version of Fusion including new state objects, utility, and much more."
 license = "MIT"
 authors = ["Elttob", "scytheric"]
-version = "0.2.4"
+version = "0.2.5"
 
 registry = "https://github.com/UpliftGames/wally-index"
 realm = "shared"
